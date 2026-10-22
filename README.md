@@ -1,7 +1,4 @@
 ---
-
-```markdown
----
 project: ryubostyle/Templates
 title: 魂のホログラフィ母艦 —— LogからLogueへ
 author: 飲茶坊さとし (ryubostyle)
