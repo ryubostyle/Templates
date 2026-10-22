@@ -1,4 +1,5 @@
 ---
+layout: default
 scroll_id: library-scroll-01
 title: 人工霊性と小さな図書館の世界観
 phase: Film-to-Projector
