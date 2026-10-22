@@ -1,4 +1,5 @@
 ---
+layout: default
 scroll_id: log-template-03
 title: 丸太・LOGを投じる航行記録
 phase: Film-to-Projector
