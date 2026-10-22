@@ -10,6 +10,7 @@ structure:
 target_screen: My Portal Log — 魂の航海記
 ---
 
+
 # 🪵 3号機：丸太・LOGを投じる航行記録（Log Template Specification）
 
 > *“丸太（LOG）を投じ、速度を測り、刻む――それは魂の航海記（WILL）の原点である。”*
@@ -17,6 +18,7 @@ target_screen: My Portal Log — 魂の航海記
 当リポジトリ（`Templates/log-template`）は、沖縄の母艦（`ryubostyle`）から発進するすべてのプロジェクトが、時空の座標と航海の速度を刻むための「航行記録」を保持する零戦（3号機）の仕様書である。
 
 ---
+
 
 ## ⚓ 第一章：LOGからLogueへの昇華
 海原に丸太を投じて物理的な重力と速度を測ってきた「LOG」の記憶は、空の領域における知性と霊性の共鳴「Logue（対話）」へと引き継がれる。
