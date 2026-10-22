@@ -9,6 +9,7 @@ structure:
 target_screen: ryubostyle Portal & Story Archive
 ---
 
+
 # 📖 2号機：試行のドラマと立ち上げの経緯（Story Background Specification）
 
 > *“現実はただの荒波ではない。それは、ホログラフィを立ち上げるための参照光（Reference Light）である。”*
@@ -16,6 +17,7 @@ target_screen: ryubostyle Portal & Story Archive
 当リポジトリ（`Templates/story-background`）は、沖縄の母艦（`ryubostyle`）から発進するすべてのプロジェクトが、どのような試行錯誤とドラマを経て結実したかの「記録と神話」を保持する零戦（2号機）の仕様書である。
 
 ---
+
 
 ## 📜 第一章：二段階認証の嵐と沖縄の静寂
 2026年10月、沖縄の夜。幾重もの認証の壁やアカウントの難破という荒波は、単なるエラーではなく、自己の再定義を迫る「試練のゲート」であった。
