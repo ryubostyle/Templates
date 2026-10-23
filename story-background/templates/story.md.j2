@@ -1,0 +1,18 @@
+# {{ title }}
+
+> **指針**: {{ philosophy.principle }}
+
+---
+
+## ⏳ タイムライン
+{% for item in timeline %}
+- **{{ item.date }}**: {{ item.event }}
+{% endfor %}
+
+## ⚡ 重要な転換点 (Turning Points)
+{% for point in turning_points %}
+1. {{ point }}
+{% endfor %}
+
+---
+*Narrative Mode: {{ narrative_mode }}*
