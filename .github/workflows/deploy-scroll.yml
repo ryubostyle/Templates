@@ -23,8 +23,9 @@ jobs:
 
       - name: 4. 第一機の点火スイッチを実行
         run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)
           python library-scroll/run_demo.py
-
+          
       - name: 5. 生成されたインデックスをGitHubに自動保存（コミット）する
         run: |
           git config --global user.name "ryubo-style-bot"
