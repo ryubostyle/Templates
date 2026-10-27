@@ -1,10 +1,9 @@
-# library-scroll/projector.py
-# 「ひとつ上の階層（..）にある core から BaseProjector を継承する」
-from ..core.base_projector import BaseProjector
+# library-scroll/projector.py の血統の結び方
+from core.base_projector import BaseProjector
 
 class LibraryScrollProjector(BaseProjector):
     def project(self, film_data):
-        # 継承した親の仕組みを使って現像処理を行う
+        # 幹の理に沿った現像処理
         pass
         
 class LibraryScrollProjector(BaseProjector):
