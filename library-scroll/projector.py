@@ -1,8 +1,12 @@
 # library-scroll/projector.py
-from pathlib import Path
-from typing import Any
-from core.base_projector import BaseProjector
+# 「ひとつ上の階層（..）にある core から BaseProjector を継承する」
+from ..core.base_projector import BaseProjector
 
+class LibraryScrollProjector(BaseProjector):
+    def project(self, film_data):
+        # 継承した親の仕組みを使って現像処理を行う
+        pass
+        
 class LibraryScrollProjector(BaseProjector):
     template_id = "library-scroll"
 
