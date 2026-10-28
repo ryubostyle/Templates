@@ -4,39 +4,44 @@ import yaml
 
 class RecyclingProcessor:
     """
-    【回収と零点】の骨組みだけを司る、静寂の基底プロセッサ
+    【回収・零点・index自動生成】を司る静寂の基底プロセッサ
     """
-    def __init__(self, trushes_dir: str, archives_dir: str):
-        self.trushes_dir = trushes_dir
+    def __init__(self, root_trushes_dir: str, archives_dir: str):
+        self.root_trushes_dir = root_trushes_dir
         self.archives_dir = archives_dir
 
     def sweep_and_transform(self) -> str:
-        os.makedirs(self.trushes_dir, exist_ok=True)
+        os.makedirs(self.root_trushes_dir, exist_ok=True)
         os.makedirs(self.archives_dir, exist_ok=True)
         
-        raws = [f for f in os.listdir(self.trushes_dir) if not f.startswith('.') and os.path.isfile(os.path.join(self.trushes_dir, f))]
-        if not raws:
-            return self._zen_void()
-        
-        target = sorted(raws)[0]
-        path = os.path.join(self.trushes_dir, target)
-        
-        # 素材の適格性に応じて、適切な子クラス（プロセッサ）へ委譲する
-        return self._dispatch_processor(path, target)
+        # 零点（index.md）の自動生成
+        self._generate_index_md(self.root_trushes_dir, "大元のゴミ捨て場（Root Trushes）")
 
-    def _dispatch_processor(self, path: str, name: str) -> str:
-        # ここで素材を見極め、適切な子クラスのインスタンスを生成・実行する
-        # （※実装例として、テキストかメディアかを判定して委譲）
-        from core.text_processor import TextRecyclingProcessor
-        from core.media_processor import MediaRecyclingProcessor
-        
-        if TextRecyclingProcessor.can_process(name, path):
-            return TextRecyclingProcessor(self.trushes_dir, self.archives_dir).process(path, name)
-        else:
-            return MediaRecyclingProcessor(self.trushes_dir, self.archives_dir).process(path, name)
+        # 1. 各専門プロセッサを順次起動し、多段式パイプラインを巡回する
+        from core.RecyclingPlant.QuarantineProcessor.quarantine_processor import QuarantineProcessor
+        from core.RecyclingPlant.TextProcessor.text_processor import TextRecyclingProcessor
+        from core.RecyclingPlant.MediaProcessor.media_processor import MediaRecyclingProcessor
+
+        # 順序: quarantine(未定義検疫) -> text(文書昇華) -> media(メディア昇華)
+        processors = [
+            QuarantineProcessor(self.root_trushes_dir, self.archives_dir),
+            TextRecyclingProcessor(self.root_trushes_dir, self.archives_dir),
+            MediaRecyclingProcessor(self.root_trushes_dir, self.archives_dir)
+        ]
+
+        result_film = None
+        for proc in processors:
+            result_film = proc.process_cascade()
+            if result_film:
+                break # いずれかの棟で処理（または検疫）が行われたらその幕とする
+
+        if not result_film:
+            return self._zen_void()
+
+        return result_film
 
     def _zen_void(self) -> str:
-        return self._stamp("void", "静寂の記録", "void", {"type": "void_echo", "content": "trushes/ は静寂に包まれている。"}, True)
+        return self._stamp("void", "静寂の記録", "void", {"type": "void_echo", "content": "すべての trushes/ は静寂に包まれている。"}, True)
 
     def _stamp(self, prefix: str, title_base: str, origin: str, source_meta: dict, preserved: bool) -> str:
         today = datetime.now().strftime("%Y.%m.%d")
@@ -50,11 +55,11 @@ class RecyclingProcessor:
             "film_id": f"{prefix}-{today}-{seq}",
             "title": f"{title_base} ── {today} 第{seq}幕",
             "source": source_meta,
-            "latent_questions": ["それぞれの断片が持つ理は、システムにどのような進化をもたらすか？"],
+            "latent_questions": ["多段式プラントを巡る断片は、庵にどのような秩序をもたらすか？"],
             "provenance": {
                 "source_preserved": preserved,
                 "interpretation_status": f"{prefix}_harmonized",
-                "generated_by": "core.RecyclingProcessor"
+                "generated_by": "core.RecyclingPlant.RecyclingProcessor"
             }
         }
         
@@ -63,3 +68,20 @@ class RecyclingProcessor:
             
         print(f"✨ [RecyclingProcessor] 地層へ静かに定着: {filepath}")
         return filepath
+
+    def _generate_index_md(self, target_dir: str, title: str):
+        """どの階層のフォルダーにアクセスしても零点（index.md）として美しく表示させる"""
+        os.makedirs(target_dir, exist_ok=True)
+        index_path = os.path.join(target_dir, "index.md")
+        files = [f for f in os.listdir(target_dir) if not f.startswith('.')]
+        
+        content = f"# {title}\n\n> 零点 ── 現在のこの空間に漂う断片たち\n\n"
+        content += "### 📁 収納されている断片\n"
+        if files:
+            for f in files:
+                content += f"- {f}\n"
+        else:
+            content += "- *(静寂：断片はありません)*\n"
+            
+        with open(index_path, "w", encoding="utf-8") as f:
+            f.write(content)
