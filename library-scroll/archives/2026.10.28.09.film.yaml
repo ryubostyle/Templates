@@ -1,0 +1,12 @@
+film_id: quarantine-2026.10.28-09
+title: 検疫と鎮火の記録 ── 2026.10.28 第09幕
+source:
+  type: quarantined_fragment
+  reason: '非テキスト系の異物を検知: Man_connecting_nature_and_techno…_20261020122139.jpg'
+  origin_file: Man_connecting_nature_and_techno…_20261020122139.jpg
+latent_questions:
+- この静けさや異物の中に、次なる秩序の芽生えはあるか？
+provenance:
+  source_preserved: false
+  interpretation_status: quarantine_harmonized
+  generated_by: core.RecyclingProcessor
