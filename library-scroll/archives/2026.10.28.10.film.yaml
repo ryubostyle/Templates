@@ -1,0 +1,12 @@
+film_id: quarantine-2026.10.28-10
+title: 検疫と鎮火の記録 ── 2026.10.28 第10幕
+source:
+  type: quarantined_fragment
+  reason: '未定義の異物を検知: Microsoft.PowerToys.Configure.psd1'
+  origin_file: Microsoft.PowerToys.Configure.psd1
+latent_questions:
+- それぞれの断片が持つ理は、システムにどのような進化をもたらすか？
+provenance:
+  source_preserved: false
+  interpretation_status: quarantine_harmonized
+  generated_by: core.RecyclingProcessor
