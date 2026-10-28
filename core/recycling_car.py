@@ -14,8 +14,13 @@ class RecyclingCar:
         os.makedirs(self.trushes_dir, exist_ok=True)
         os.makedirs(self.archives_dir, exist_ok=True)
         
-        # trushes/ 内のファイル一覧を取得
-        draft_files = [f for f in os.listdir(self.trushes_dir) if os.path.isfile(os.path.join(self.trushes_dir, f))]
+        # 修正前：
+        # draft_files = [f for f in os.listdir(self.trushes_dir) if os.path.isfile(os.path.join(self.trushes_dir, f))]
+        # 修正後（.gitkeep などの隠しファイルを掃除対象から守る）：
+        draft_files = [
+            f for f in os.listdir(self.trushes_dir) 
+            if os.path.isfile(os.path.join(self.trushes_dir, f)) and not f.startswith('.')
+        ]
         
         if not draft_files:
             # 回収すべきカオスがない場合は、デフォルトの思考の断片を生成
