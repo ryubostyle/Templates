@@ -4,165 +4,75 @@ import yaml
 
 class RecyclingProcessor:
     """
-    【回収・分別・鎮火・焼却・昇華・零点】のパイプラインを司る基幹クラス
-    多様なカオス（テキスト、バイナリ、想定外の断片）を検疫し、秩序ある地層へ昇華させる
+    【分別・鎮火・焼却・昇華・零点】の理を静かに宿す、無駄なき全自動プラント
     """
     
+    TEXT_EXTS = ('.txt', '.md', '.html', '.json', '.yaml', '.yml', '.csv')
+
     def __init__(self, trushes_dir: str, archives_dir: str):
         self.trushes_dir = trushes_dir
         self.archives_dir = archives_dir
 
     def sweep_and_transform(self) -> str:
-        """① 【回収】から始まる全パイプラインを統括実行するメインメソッド"""
         os.makedirs(self.trushes_dir, exist_ok=True)
         os.makedirs(self.archives_dir, exist_ok=True)
         
-        # 1. 【回収】trushes/ 内のファイル一覧を取得（.gitkeep などの隠しファイルは厳重に保護）
-        raw_files = [
-            f for f in os.listdir(self.trushes_dir) 
-            if os.path.isfile(os.path.join(self.trushes_dir, f)) and not f.startswith('.')
-        ]
+        # ① 回収：隠しファイル（.gitkeep等）を除いた最も古き断片を迎える
+        raws = [f for f in os.listdir(self.trushes_dir) if not f.startswith('.') and os.path.isfile(os.path.join(self.trushes_dir, f))]
+        if not raws:
+            return self._zen_void()
         
-        if not raw_files:
-            # ⑤ 【零点】ゴミがない静寂の処理
-            return self._process_void()
+        target = sorted(raws)[0]
+        path = os.path.join(self.trushes_dir, target)
         
-        # 最も古い断片を対象とする
-        target_file = sorted(raw_files)[0]
-        file_path = os.path.join(self.trushes_dir, target_file)
+        # ② 分別：素材の適格性を静かに見極める
+        ok, payload = self._inspect(path, target)
         
-        # 2. 【分別】拡張子やバイナリの判定・デコード検証
-        is_valid_text, content_or_reason = self._inspect_and_sort(file_path, target_file)
-        
-        # 3. 【鎮火】規定に反するもの・バイナリの処理（検疫・隔離）
-        if not is_valid_text:
-            return self._extinguish_and_quarantine(file_path, target_file, content_or_reason)
-        
-        # 4. 【焼却・昇華】安全な炉内でネガフィルムへ定着
-        return self._incinerate_and_harmonize(file_path, target_file, content_or_reason)
+        # ③ 鎮火 or ④ 焼却
+        return self._quarantine(path, target, payload) if not ok else self._harmonize(path, target, payload)
 
-    def _inspect_and_sort(self, file_path: str, filename: str):
-        """② 【分別】テキストとして安全に読めるか、拡張子とデコードの二重チェックを行う"""
-        text_extensions = ('.txt', '.md', '.html', '.json', '.yaml', '.yml', '.csv')
-        
-        # 拡張子による第一段階の分別
-        if not filename.lower().endswith(text_extensions):
-            return False, f"非テキスト系の拡張子（メディア・バイナリ等の断片）を検知しました: {filename}"
-            
-        # 読み込みテストによる第二段階の分別（UTF-8デコード検証）
+    def _inspect(self, path: str, name: str):
+        if not name.lower().endswith(self.TEXT_EXTS):
+            return False, f"非テキスト系の異物を検知: {name}"
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
-                content = f.read()
-            return True, content
+            with open(path, "r", encoding="utf-8") as f:
+                return True, f.read()
         except Exception as e:
-            return False, f"デコードエラー（UnicodeDecodeError等）を検知しました: {str(e)}"
+            return False, f"デコードの破綻を検知: {e}"
 
-    def _extinguish_and_quarantine(self, file_path: str, filename: str, reason: str) -> str:
-        """③ 【鎮火】システムを止めず、想定外の断片を安全な検疫ネガとして隔離・昇華する"""
-        os.remove(file_path)
-        print(f"🧯 [RecyclingProcessor:鎮火] 不適合な断片を検知したため、鎮火・隔離します: {filename} ({reason})")
+    def _harmonize(self, path: str, name: str, content: str) -> str:
+        os.remove(path)
+        return self._stamp("scroll", "混沌からの昇華", name, {"type": "recycled_draft", "content": content.strip()}, True)
 
-        today_str = datetime.now().strftime("%Y.%m.%d")
-        existing_archives = os.listdir(self.archives_dir)
-        today_prefix = f"{today_str}."
-        today_count = sum(1 for f in existing_archives if f.startswith(today_prefix) and f.endswith(".film.yaml"))
-        sequence_number = f"{today_count + 1:02d}"
+    def _quarantine(self, path: str, name: str, reason: str) -> str:
+        os.remove(path)
+        return self._stamp("quarantine", "検疫と鎮火の記録", name, {"type": "quarantined_fragment", "reason": reason}, False)
+
+    def _zen_void(self) -> str:
+        return self._stamp("void", "静寂の記録", "void", {"type": "void_echo", "content": "trushes/ は静寂に包まれている。"}, True)
+
+    def _stamp(self, prefix: str, title_base: str, origin: str, source_meta: dict, preserved: bool) -> str:
+        today = datetime.now().strftime("%Y.%m.%d")
+        count = sum(1 for f in os.listdir(self.archives_dir) if f.startswith(f"{today}.") and f.endswith(".film.yaml"))
+        seq = f"{count + 1:02d}"
         
-        film_filename = f"{today_str}.{sequence_number}.film.yaml"
-        film_path = os.path.join(self.archives_dir, film_filename)
+        filepath = os.path.join(self.archives_dir, f"{today}.{seq}.film.yaml")
+        source_meta["origin_file"] = origin
         
-        quarantine_data = {
-            "film_id": f"quarantine-{today_str}-{sequence_number}",
-            "title": f"検疫と鎮火の記録 ── {today_str} 第{sequence_number}幕",
-            "source": {
-                "type": "quarantined_fragment",
-                "origin_file": filename,
-                "reason": reason
-            },
-            "latent_questions": [
-                "ゴミ捨て場に投下された異物は、システムにどのような境界線を教えるか？",
-                "鎮火されたノイズの中に、未だ見ぬ表現の種子はないか？"
-            ],
+        data = {
+            "film_id": f"{prefix}-{today}-{seq}",
+            "title": f"{title_base} ── {today} 第{seq}幕",
+            "source": source_meta,
+            "latent_questions": ["この静けさや異物の中に、次なる秩序の芽生えはあるか？"],
             "provenance": {
-                "source_preserved": False,
-                "interpretation_status": "extinguished_and_quarantined",
+                "source_preserved": preserved,
+                "interpretation_status": f"{prefix}_harmonized",
                 "generated_by": "core.RecyclingProcessor"
             }
         }
         
-        with open(film_path, "w", encoding="utf-8") as f:
-            yaml.dump(quarantine_data, f, allow_unicode=True, sort_keys=False)
+        with open(filepath, "w", encoding="utf-8") as f:
+            yaml.dump(data, f, allow_unicode=True, sort_keys=False)
             
-        print(f"🛡️ [RecyclingProcessor] 検疫ネガが地層に定着しました: {film_path}")
-        return film_path
-
-    def _incinerate_and_harmonize(self, file_path: str, filename: str, content: str) -> str:
-        """④ 【焼却・昇華】適格なテキストを美しいネガフィルムへと昇華させる"""
-        os.remove(file_path)
-        print(f"🔥 [RecyclingProcessor:焼却] 適格なドラフトを炉へ投入しました: {filename}")
-
-        today_str = datetime.now().strftime("%Y.%m.%d")
-        existing_archives = os.listdir(self.archives_dir)
-        today_prefix = f"{today_str}."
-        today_count = sum(1 for f in existing_archives if f.startswith(today_prefix) and f.endswith(".film.yaml"))
-        sequence_number = f"{today_count + 1:02d}"
-        
-        new_film_filename = f"{today_str}.{sequence_number}.film.yaml"
-        new_film_path = os.path.join(self.archives_dir, new_film_filename)
-        
-        film_data = {
-            "film_id": f"scroll-{today_str}-{sequence_number}",
-            "title": f"混沌からの昇華 ── {today_str} 第{sequence_number}幕",
-            "source": {
-                "type": "recycled_draft",
-                "origin_file": filename,
-                "content": content.strip()
-            },
-            "latent_questions": [
-                "分別された断片は、スクリーンに何を映し出すか？",
-                "混沌を秩序へと変えるこの循環は、システムにどのような進化をもたらすか？"
-            ],
-            "provenance": {
-                "source_preserved": True,
-                "interpretation_status": "recycled_and_harmonized",
-                "generated_by": "core.RecyclingProcessor"
-            }
-        }
-        
-        with open(new_film_path, "w", encoding="utf-8") as f:
-            yaml.dump(film_data, f, allow_unicode=True, sort_keys=False)
-            
-        print(f"✨ [RecyclingProcessor:昇華] 新しいネガが地層に定着しました: {new_film_path}")
-        return new_film_path
-
-    def _process_void(self) -> str:
-        """⑤ 【零点】ゴミがない静寂（Void）の処理"""
-        today_str = datetime.now().strftime("%Y.%m.%d")
-        existing_archives = os.listdir(self.archives_dir)
-        today_prefix = f"{today_str}."
-        today_count = sum(1 for f in existing_archives if f.startswith(today_prefix) and f.endswith(".film.yaml"))
-        sequence_number = f"{today_count + 1:02d}"
-        
-        new_film_path = os.path.join(self.archives_dir, f"{today_str}.{sequence_number}.film.yaml")
-        
-        void_data = {
-            "film_id": f"void-{today_str}-{sequence_number}",
-            "title": f"静寂の記録 ── {today_str} 第{sequence_number}幕",
-            "source": {
-                "type": "void_echo",
-                "content": "trushes/ は静寂に包まれている。新たなカオスの投下を待っている状態。"
-            },
-            "latent_questions": [
-                "何もない空間から、次に生まれる秩序は何色か？"
-            ],
-            "provenance": {
-                "source_preserved": True,
-                "interpretation_status": "void_harmonized",
-                "generated_by": "core.RecyclingProcessor"
-            }
-        }
-        
-        with open(new_film_path, "w", encoding="utf-8") as f:
-            yaml.dump(void_data, f, allow_unicode=True, sort_keys=False)
-            
-        return new_film_path
+        print(f"✨ [RecyclingProcessor] 地層へ静かに定着: {filepath}")
+        return filepath
