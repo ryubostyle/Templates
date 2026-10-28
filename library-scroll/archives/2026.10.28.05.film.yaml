@@ -1,0 +1,13 @@
+film_id: quarantine-2026.10.28-05
+title: 検疫と鎮火の記録 ── 2026.10.28 第05幕
+source:
+  type: quarantined_fragment
+  origin_file: 2026.0905.00.mp4
+  reason: '非テキスト系の拡張子（メディア・バイナリ等の断片）を検知しました: 2026.0905.00.mp4'
+latent_questions:
+- ゴミ捨て場に投下された異物は、システムにどのような境界線を教えるか？
+- 鎮火されたノイズの中に、未だ見ぬ表現の種子はないか？
+provenance:
+  source_preserved: false
+  interpretation_status: extinguished_and_quarantined
+  generated_by: core.RecyclingProcessor
