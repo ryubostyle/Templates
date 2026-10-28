@@ -1,0 +1,12 @@
+film_id: quarantine-2026.10.28-08
+title: 検疫と鎮火の記録 ── 2026.10.28 第08幕
+source:
+  type: quarantined_fragment
+  reason: '非テキスト系の異物を検知: Log_to_Logue_Base_Class_Architecture.pdf'
+  origin_file: Log_to_Logue_Base_Class_Architecture.pdf
+latent_questions:
+- この静けさや異物の中に、次なる秩序の芽生えはあるか？
+provenance:
+  source_preserved: false
+  interpretation_status: quarantine_harmonized
+  generated_by: core.RecyclingProcessor
