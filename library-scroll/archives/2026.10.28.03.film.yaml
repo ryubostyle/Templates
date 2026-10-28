@@ -1,0 +1,13 @@
+film_id: scroll-2026.10.28-03
+title: 混沌からの昇華 ── 2026.10.28 第03幕
+source:
+  type: recycled_draft
+  origin_file: void_echo
+  content: trushes/ は静寂に包まれている。新たなカオスの投下を待っている状態。
+latent_questions:
+- ゴミ捨て場（trushes）から回収された断片は、スクリーンに何を映し出すか？
+- 混沌を秩序へと変えるこの循環は、システムにどのような進化をもたらすか？
+provenance:
+  source_preserved: true
+  interpretation_status: recycled_and_harmonized
+  generated_by: core.RecyclingCar
