@@ -31,7 +31,7 @@ jobs:
           python library-scroll/run_demo.py
 
       - name: Commit and Push Generated Artifacts
-        uses: stefanzew/git-auto-commit-action@v5
+        uses: endbug/git-auto-commit@v5
         with:
           commit_message: "✨ [Auto-Render] 多段式プラントのネガ自動生成と零点構築を完了"
           branch: main
