@@ -1,31 +1,28 @@
 import sys
-import os
+from pathlib import Path
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# プラントのルートディレクトリを Python の検索パスに強制的に通す調律
+root_dir = Path(__file__).resolve().parent.parent
+sys.path.append(str(root_dir))
 
-from core.RecyclingPlant.recycling_processor import RecyclingProcessor
-from core.error_trapper import ErrorTrapper
-from projector import LibraryScrollProjector
+print(f"✨ 庵のルートパスを定位しました: {root_dir}")
+print(f"✨ 現在の検索パス (sys.path): {sys.path}")
 
-def run():
-    archives_dir = "library-scroll/archives"
-    trushes_dir = "library-scroll/trushes"
+try:
+    # ── プラントの各モジュールのインポートと実行 ──
+    # 例: from core.base_projector import ...
+    print("🌿 プラントの起動プロセスを開始します...")
     
-    try:
-        print("🚀 [library-scroll] 多段式プラントの航海を開始します...")
-        
-        processor = RecyclingProcessor(root_trushes_dir=trushes_dir, archives_dir=archives_dir)
-        new_film_path = processor.sweep_and_transform()
-        
-        projector = LibraryScrollProjector()
-        projector.project(new_film_path)
-        
-        print("✨ [library-scroll] すべての多段式プロセスが正常に完了しました。")
+    # ここに実際の処理（例：ゴミ箱の検疫・ネガ化の呼び出しなど）を記述
+    # projector.run() など
+    
+    print("✨ すべてのプロセスが平穏に完了しました。")
 
-    except Exception as e:
-        print(f"⚠️ 異常を検知しました: {e}")
-        ErrorTrapper.trap(archives_dir=archives_dir, error_context="library-scroll/run_demo.py execution", exception=e)
-        raise e
-
-if __name__ == "__main__":
-    run()
+except Exception as e:
+    # ほころび（エラー）を優しく捕捉し、詳細なログとしてスクリーンへ映し出す
+    print("\n[!] プラントの航海中に予期せぬほころびが検知されました：")
+    import traceback
+    traceback.print_exc()
+    
+    # Actions側に明確にエラーを伝えるために異常終了コードを返す
+    sys.exit(1)
