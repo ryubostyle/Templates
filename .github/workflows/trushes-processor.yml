@@ -31,3 +31,8 @@ jobs:
           echo "=== 零点 (.trushes) への投入を検知しました ==="
           # 水（ErrorTrapper）を従え、ボイラー（core/RecyclingPlant）を起動する結線
           python -m core.RecyclingPlant.recycling_processor
+      
+      - name: Run Integrated Main Pipeline
+        run: |
+          echo "=== 統合マネージャー (main.py) を点火します ==="
+          python main.py
