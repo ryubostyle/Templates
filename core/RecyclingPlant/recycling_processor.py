@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 import yaml
+from ErrorTrapper.trapper import ErrorTrapper
 
 class RecyclingProcessor:
     """
@@ -11,34 +12,46 @@ class RecyclingProcessor:
         self.archives_dir = archives_dir
 
     def sweep_and_transform(self) -> str:
-        os.makedirs(self.root_trushes_dir, exist_ok=True)
-        os.makedirs(self.archives_dir, exist_ok=True)
-        
-        # 零点（index.md）の自動生成
-        self._generate_index_md(self.root_trushes_dir, "大元のゴミ捨て場（Root Trushes）")
+        try:
+            os.makedirs(self.root_trushes_dir, exist_ok=True)
+            os.makedirs(self.archives_dir, exist_ok=True)
+            
+            # 零点（index.md）の自動生成
+            self._generate_index_md(self.root_trushes_dir, "大元のゴミ捨て場（Root Trushes）")
 
-        # 1. 各専門プロセッサを順次起動し、多段式パイプラインを巡回する
-        from core.RecyclingPlant.QuarantineProcessor.quarantine_processor import QuarantineProcessor
-        from core.RecyclingPlant.TextProcessor.text_processor import TextRecyclingProcessor
-        from core.RecyclingPlant.MediaProcessor.media_processor import MediaRecyclingProcessor
+            # 1. 各専門プロセッサを順次起動し、多段式パイプラインを巡回する
+            from core.RecyclingPlant.QuarantineProcessor.quarantine_processor import QuarantineProcessor
+            from core.RecyclingPlant.TextProcessor.text_processor import TextRecyclingProcessor
+            from core.RecyclingPlant.MediaProcessor.media_processor import MediaRecyclingProcessor
 
-        # 順序: quarantine(未定義検疫) -> text(文書昇華) -> media(メディア昇華)
-        processors = [
-            QuarantineProcessor(self.root_trushes_dir, self.archives_dir),
-            TextRecyclingProcessor(self.root_trushes_dir, self.archives_dir),
-            MediaRecyclingProcessor(self.root_trushes_dir, self.archives_dir)
-        ]
+            # 順序: quarantine(未定義検疫) -> text(文書昇華) -> media(メディア昇華)
+            processors = [
+                QuarantineProcessor(self.root_trushes_dir, self.archives_dir),
+                TextRecyclingProcessor(self.root_trushes_dir, self.archives_dir),
+                MediaRecyclingProcessor(self.root_trushes_dir, self.archives_dir)
+            ]
 
-        result_film = None
-        for proc in processors:
-            result_film = proc.process_cascade()
-            if result_film:
-                break # いずれかの棟で処理（または検疫）が行われたらその幕とする
+            result_film = None
+            for proc in processors:
+                result_film = proc.process_cascade()
+                if result_film:
+                    break # いずれかの棟で処理（または検疫）が行われたらその幕とする
 
-        if not result_film:
-            return self._zen_void()
+            if not result_film:
+                # すべてが静寂に包まれている場合
+                ErrorTrapper._zen_void(self.archives_dir)
+                return self._zen_void()
 
-        return result_film
+            return result_film
+
+        except Exception as e:
+            # 予期せぬ破綻が起きた場合、水脈が直ちにキャッチしてフィルムに定着させる
+            ErrorTrapper.trap(
+                archives_dir=self.archives_dir,
+                error_context="RecyclingProcessor.sweep_and_transform 実行中の例外",
+                exception=e
+            )
+            raise e
 
     def _zen_void(self) -> str:
         return self._stamp("void", "静寂の記録", "void", {"type": "void_echo", "content": "すべての trushes/ は静寂に包まれている。"}, True)
