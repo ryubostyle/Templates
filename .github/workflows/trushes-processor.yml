@@ -24,6 +24,5 @@ jobs:
       - name: Run RecyclingPlant & ErrorTrapper
         run: |
           echo "=== 零点 (.trushes) への投入を検知しました ==="
-          # ここで core/RecyclingPlant/ などの処理スクリプトを実行します
-          # 例: python core/RecyclingPlant/main_processor.py
-          python -c "print('Executing error_trapper and recycling plant logic...')"
+          # 水（ErrorTrapper）を従え、ボイラー（core/RecyclingPlant）を起動する結線
+          python -m core.RecyclingPlant.recycling_processor
