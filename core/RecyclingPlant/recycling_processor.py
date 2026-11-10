@@ -98,3 +98,13 @@ class RecyclingProcessor:
             
         with open(index_path, "w", encoding="utf-8") as f:
             f.write(content)
+
+    if __name__ == "__main__":
+        # ボイラー室からの直接点火
+        root_trushes = ".trushes"
+        archives = "library-scroll/archives"
+        
+        print("🔥 [Ignition] ボイラーの直接点火を試みます...")
+        processor = RecyclingProcessor(root_trushes_dir=root_trushes, archives_dir=archives)
+        result = processor.sweep_and_transform()
+        print(f"✨ [Completed] 処理結果フィルム: {result}")
