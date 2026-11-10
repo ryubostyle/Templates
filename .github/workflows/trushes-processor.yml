@@ -1,0 +1,29 @@
+name: Trushes Auto-Processor
+
+# 1. トリガー設定：.trushes/ 配下に変更（push）があった時だけ起動
+on:
+  push:
+    paths:
+      - '.trushes/**'
+      # ※ .gitkeep 自体の変更を除外したい場合は以下のように ! を使って除外も可能
+      - '!.trushes/.gitkeep'
+
+jobs:
+  process-chaos:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Run RecyclingPlant & ErrorTrapper
+        run: |
+          echo "=== 零点 (.trushes) への投入を検知しました ==="
+          # ここで core/RecyclingPlant/ などの処理スクリプトを実行します
+          # 例: python core/RecyclingPlant/main_processor.py
+          python -c "print('Executing error_trapper and recycling plant logic...')"
