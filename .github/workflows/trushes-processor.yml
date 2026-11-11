@@ -1,38 +1,40 @@
-name: Trushes Auto-Processor
+name: Scroll Strata Crystallization
 
-# 1. トリガー設定：.trushes/ 配下に変更（push）があった時だけ起動
 on:
-  push:
-    paths:
-      - '.trushes/**'
-      # ※ .gitkeep 自体の変更を除外したい場合は以下のように ! を使って除外も可能
-      - '!.trushes/.gitkeep'
+  # 手動での儀式（任意のタイミングでの発動）
+  workflow_dispatch:
+  # 定期的な自律代謝（例：毎日深夜0時に全方位スキャンとスクロール定着を実行）
+  schedule:
+    - cron: '0 0 * * *'
+
+permissions:
+  contents: write  # リポジトリへ直接コミット・プッシュするための権限
 
 jobs:
-  process-chaos:
+  crystallize-scrolls:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Checkout repository
+      - name: 🧭 Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Set up Python
+      - name: 🐍 Set up Python Environment
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Install Dependencies
+      - name: 🔥 Execute Processor Orchestration
         run: |
-          python -m pip install --upgrade pip
-          pip install PyYAML
+          echo "🔥 [Cloud Metabolism] Processor による三位一体の循環を開始します..."
+          python Processor/baseProcessor.py
 
-      - name: Run RecyclingPlant & ErrorTrapper
-        run: |
-          echo "=== 零点 (.trushes) への投入を検知しました ==="
-          # 水（ErrorTrapper）を従え、ボイラー（core/RecyclingPlant）を起動する結線
-          python -m core.RecyclingPlant.recycling_processor
-      
-      - name: Run Integrated Main Pipeline
-        run: |
-          echo "=== 統合マネージャー (main.py) を点火します ==="
-          python main.py
+      - name: 🏛️ Crystallize to Strata (Git Auto Commit)
+        uses: endbug/git-auto-commit@v5
+        with:
+          commit_message: "📜 [Strata Archive] 自律循環により生成されたスクロールを library-scroll/ の地層に定着させました"
+          branch: main
+          file_pattern: library-scroll/*
+          default_author: github-actions[bot]
+          skip_ci: true  # 自動コミット起因による無限ループの防止
