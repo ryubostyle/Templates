@@ -1,14 +1,12 @@
 name: Processor Autonomous Orchestration
 
 on:
-  # 1. 任意のタイミングで手動キック（Workflow Dispatch）
   workflow_dispatch:
-  # 2. 定期的な自律代謝（例：毎日深夜0時や任意のスケジュール）
   schedule:
     - cron: '0 0 * * *'
 
 permissions:
-  contents: write  # StrataCrystallization/ への結晶化コミット権限
+  contents: write
 
 jobs:
   kick-processor:
@@ -30,11 +28,18 @@ jobs:
           echo "🔥 [Cloud Metabolism] 雲上の環境で Processor のタクトを振ります..."
           python Processor/baseProcessor.py
 
-      - name: 🏛️ Crystallize to Strata (Git Auto Commit)
-        uses: endbug/git-auto-commit@v5
-        with:
-          commit_message: "📜 [Strata Archive] Cloud上の Processor 循環により生成されたスクロールを結晶化しました"
-          branch: main
-          file_pattern: StrataCrystallization/*
-          default_author: github-actions[bot]
-          skip_ci: true  # 無限ループの遮断
+      - name: 🏛️ Crystallize to Strata (Standard Git Commit)
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # StrataCrystallization/ 配下の変更を検知してステージング
+          git add StrataCrystallization/*
+          
+          # 変更がある場合のみコミット＆プッシュを実行
+          if git diff --staged --quiet; then
+            echo "🍃 [Strata Archive] 新たな結晶化スクロールはありませんでした。"
+          else
+            git commit -m "📜 [Strata Archive] 自律循環により生成されたスクロールを結晶化しました"
+            git push
+          fi
