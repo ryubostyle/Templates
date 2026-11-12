@@ -55,14 +55,20 @@ if __name__ == "__main__":
         def absorb_entropy_seed(self) -> Dict[str, str]:
             seeds = {}
             for path in self.source_paths:
-                # 🛑 ガードをコメントアウトし、何でもかんでも通してみる
-                # if path.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.bin', '.exe')):
-                #     print(f"    🛡️ [Chaos Guard] 非テキストのバイナリを検知しました。シード化をスキップします: [{os.path.basename(path)}]")
-                #     continue
-                
                 if os.path.exists(path):
-                    with open(path, "r", encoding="utf-8") as f:
-                        seeds[path] = f.read()
+                    try:
+                        # まず UTF-8 テキストとして読み込みを試みる
+                        with open(path, "r", encoding="utf-8") as f:
+                            content = f.read()
+                        seeds[path] = content
+                        print(f"    ✓ テキストシード収穫成功: [{os.path.basename(path)}]")
+                    except UnicodeDecodeError:
+                        # 🛑 UnicodeDecodeError のトラップ処理もここに完全に飲み込ませる
+                        print(f"    ⚠️ [Open Flow Bypass] バイナリ/デコード不能なファイルを検出しましたが、完全通過させます: [{os.path.basename(path)}]")
+                        # バイナリの場合は空文字またはダミーとして通す、あるいはスキップして後続の処理に委ねる
+                        seeds[path] = "[Binary/Non-Text Content Bypassed]"
+                    except Exception as e:
+                        print(f"    ⚠️ [General Exception Bypass] 予期せぬ例外: [{os.path.basename(path)}] -> {e}")
             return seeds
 
     # 👇 本番用 Entropy 具象クラス（実シードの整流と例外捕捉）
