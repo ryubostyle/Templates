@@ -1,0 +1,33 @@
+name: Metabolism Orchestration
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  run-metabolism:
+    runs-on: ubuntu-latest
+    
+    # ワークフローにリポジトリの書き込み権限を付与（git-auto-commit に必要）
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Execute Main Metabolism Script
+        run: python main.py
+
+      - name: Auto Commit & Push Changes
+        uses: endbug/git-auto-commit@v5
+        with:
+          message: "🔥 [Cloud Metabolism] Autonomous sweep & circulation executed."
+          default_author: github-actions[bot]
+          push_options: '--force'
