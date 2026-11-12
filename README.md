@@ -711,6 +711,141 @@ jobs:
 
 ---
 
+余計な澱をすべて削ぎ落とし、`.gitkeep` が凛と静かに佇むゼロベースの聖域――その周りで完璧に鼓動する **Oriented-Philosophia（三位一体の自律循環アーキテクチャ）** の全貌を体系化した公式マニュアルをここに編纂します。
+
+外部の操り手（外付けの `main.py` など）を一切排除し、コード自体が自ら呼吸し、歴史を綴るための設計図です。
+
+---
+
+# 📜 Oriented-Philosophia: 自律循環システム運用マニュアル
+
+## 1. 🏛️ システム概要と基本思想
+
+本システムは、物理・情報理論の根本原則に基づき、リポジトリ自体を一つの「自律生命体」として稼働させるためのアーキテクチャです。散らばるデータの感知から、安全な配管、実務の執行、そして永遠の地層（アーカイブ）への定着までを完全にカプセル化しています。
+
+```text
+       ┌──────────────┐
+       │    Chaos     │ 🌪️ (感覚器：揺らぎ・未整流の原初データを感知)
+       └──────┬───────┘
+              │ 🫀 seeds (原初シードの受け渡し)
+              ▼
+       ┌──────────────┐
+       │   Entropy    │ 🌊 (神経・血流：安全配管・例外捕捉・異常検針)
+       └──────┬───────┘
+              │ ⚡ channeled_data (整流済みデータの受領)
+              ▼
+       ┌──────────────┐
+       │  Processor   │ 🔥 (心臓・意志：タクトを振り、実務を執行)
+       └──────┬───────┘
+              │ 📜 write_to_scroll()
+              ▼
+       ┌──────────────┐
+       │library-scroll│ 🏛️ (地層・永遠のアーカイブ：スクロールの堆積)
+       └──────────────┘
+
+```
+
+---
+
+## 2. 🧩 三零点の構造と責務
+
+### 🌪️ 第一の零点：Chaos（揺らぎのインプット・感覚器）
+
+* **配置**: `Chaos/baseChaos.py`
+* **責務**: 外界の未整流なノイズやファイル群を自己言及的にスキャンし、正負・明暗のエネルギーバランスを保ちながら「揺らぎ」を感知・保持する。
+* **主要メソッド**:
+* `sense_fluctuation()`: 零点内や指定ディレクトリの揺らぎ（インプットの発生）を感知する。
+* `absorb_entropy_seed()`: 混沌の中から次の下流へ流すための原初データ（`seeds` 辞書）を収穫する。
+
+
+
+### 🌊 第二の零点：Entropy（不可逆的Cascading・配管と神経）
+
+* **配置**: `Entropy/baseEntropy.py`
+* **責務**: Chaos から送られてきた原初データ（`seeds`）を受け取り、セーフティネット（例外捕捉・エラー検針）を潜り抜けさせて、安全な下流へルーティング（整流）する。
+* **主要メソッド**:
+* `channel_flow()`: データを安全に下流へ流すための配管（移送・検証）を行う。
+* `trap_errors()`: 移送中に発生したデータの破損や非互換を `ErrorTrapper` で厳重に隔離する。
+
+
+
+### 🔥 第三の零点：Processor（実務執行とオーケストレーション・心臓と意志）
+
+* **配置**: `Processor/baseProcessor.py`
+* **責務**: 単なる下流の作業場ではなく、自ら指揮棒（タクト）を握る司令塔（オーケストレーター）として機能する。Chaos を起動し、Entropy を経由させ、得られた整流済みデータを実務として具現化する。
+* **主要メソッド**:
+* `orchestrate_cycle()`: Chaos の感知 ➔ Entropy の整流 ➔ Processor の執行に至る全循環を駆動する。
+* `write_to_scroll()`: 変容を遂げた成果物を `library-scroll/` の地層へ物理的に定着させる。
+
+
+
+---
+
+## 3. 🏛️ 地層の聖域：library-scroll/
+
+* **定義**: 余計な一時ログや複雑なスクリプトを一切排除し、`.gitkeep` のみが静かに佇む真のゼロベース空間。
+* **役割**: Processor が紡ぎ出した生成物（`scroll_*.md`）だけが、歴史の「巻物（スクロール）」として半永久的に堆積していく唯一のアーカイブ。
+
+---
+
+## 4. ⚙️ クラウド自動代謝（GitHub Actions ワークフロー）
+
+手動によるファイルの整理や外部スクリプトの介在を排し、クラウドの心臓部でシステムを自律駆動させるための設定（[.github/workflows/scroll-strata.yml](https://github.com/ryubostyle/Templates/blob/main/README.md#-%E8%87%AA%E5%BE%8B%E5%AE%9A%E7%9D%80%E3%83%AF%E3%83%BC%E3%82%AF%E3%83%95%E3%83%AD%E3%83%BC%E8%A8%AD%E8%A8%88githubworkflowsscroll-stratayml)）です。
+
+```yaml
+name: Scroll Strata Crystallization
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *' # 毎日深夜0時に全方位スキャンとスクロール定着を実行
+
+permissions:
+  contents: write
+
+jobs:
+  crystallize-scrolls:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🧭 Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🐍 Set up Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 🔥 Execute Processor Orchestration
+        run: |
+          echo "🔥 [Cloud Metabolism] Processor による三位一体の循環を開始します..."
+          python Processor/baseProcessor.py
+
+      - name: 🏛️ Crystallize to Strata (Git Auto Commit)
+        uses: endbug/git-auto-commit@v5
+        with:
+          commit_message: "📜 [Strata Archive] 自律循環により生成されたスクロールを library-scroll/ の地層に定着させました"
+          branch: main
+          file_pattern: library-scroll/*
+          default_author: github-actions[bot]
+          skip_ci: true
+
+```
+
+---
+
+## ✨ 運用上の要点
+
+1. **完全なる主権の移譲**: 外部からの外部コマンド制御に依存せず、`Processor/baseProcessor.py` を単体でキックするだけで全循環が完結します。
+2. **無限ループの遮断**: `skip_ci: true` の布石により、自動コミットが新たなアクションの暴走を引き起こすことを完全に防ぎ、静寂と秩序を保ちます。
+
+このマニュアルの完成により、リポジトリは単なるソースコードの置き場所ではなく、自ら呼吸し、自ら歴史を綴る「デジタル生命の庭」として永遠に自律代謝を続けます。
+
+---
+
+
+
 
 ---
 
