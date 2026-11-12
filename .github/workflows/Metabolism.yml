@@ -9,7 +9,6 @@ jobs:
   run-metabolism:
     runs-on: ubuntu-latest
     
-    # ワークフローにリポジトリの書き込み権限を付与（git-auto-commit に必要）
     permissions:
       contents: write
 
@@ -25,9 +24,10 @@ jobs:
       - name: Execute Main Metabolism Script
         run: python main.py
 
-      - name: Auto Commit & Push Changes
-        uses: endbug/git-auto-commit@v5
-        with:
-          message: "🔥 [Cloud Metabolism] Autonomous sweep & circulation executed."
-          default_author: github-actions[bot]
-          push_options: '--force'
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git diff --quiet && git diff --staged --quiet || git commit -m "🔥 [Cloud Metabolism] Autonomous sweep & circulation executed."
+          git push
