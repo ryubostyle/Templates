@@ -13,9 +13,9 @@ from Entropy.baseEntropy import BaseEntropy
 
 class BaseProcessor(ABC):
     """
-    Processor基底クラス (本番稼働版):
-    単体テストのモックを排し、Chaosの感知からEntropyの整流、
-    そして StrataCrystallization/ への実戦的な結晶化定着を統括する心臓部。
+    Processor基底クラス (完全自律代謝版):
+    Chaosの感知、Entropyの整流、StrataCrystallization/ への結晶化定着を経て、
+    読み込んだ原初シードを自動消去し、聖域の足元を常にゼロにリセットする心臓部。
     """
     def __init__(self, target_scroll_dir: str = "StrataCrystallization"):
         self.target_scroll_dir = target_scroll_dir
@@ -29,15 +29,20 @@ class BaseProcessor(ABC):
     def crystallize_scroll(self, identifier: str, content: str) -> str:
         pass
 
+    @abstractmethod
+    def reset_chaos_sanctuary(self, processed_paths: list) -> None:
+        pass
+
 
 if __name__ == "__main__":
-    print("🔥 [Processor 零点 / 本番稼働] 自律循環オーケストレーションを開始します...")
+    print("🔥 [Processor 零点 / 完全自律代謝] 自律循環オーケストレーションを開始します...")
 
     # 👇 本番用 Chaos 具象クラス（Chaos/ フォルダ内の実ファイルをスキャン）
     class ProductionChaos(BaseChaos):
         def sense_fluctuation(self) -> bool:
             if not os.path.exists(self.target_dir):
                 return False
+            # .gitkeep を除外して実ファイルのみを感知
             files = [f for f in os.listdir(self.target_dir) if os.path.isfile(os.path.join(self.target_dir, f)) and f != ".gitkeep"]
             if files:
                 self.source_paths = [os.path.join(self.target_dir, f) for f in files]
@@ -82,13 +87,13 @@ if __name__ == "__main__":
                 self.trapped_errors.append(err_log)
                 print(f"    🛡️ [ErrorTrapper] 隔離しました: {err_log}")
 
-    # 👇 本番用 Processor 統括具象クラス
-    class ProductionStrataProcessor(BaseProcessor):
+    # 👇 完全自律代謝型 Processor 統括具象クラス
+    class AutonomicStrataProcessor(BaseProcessor):
         def orchestrate_cycle(self) -> bool:
             print("  - 🎼 [Processor] 循環のタクトを振ります。実戦モードで Chaos/ をスキャンします。")
             
-            # Chaos の視線を 「Chaos/」 フォルダへと直接向ける
-            chaos = ProductionChaos("Chaos")
+            chaos_dir = "Chaos"
+            chaos = ProductionChaos(chaos_dir)
             if not chaos.sense_fluctuation():
                 print("  - 🍃 処理すべき揺らぎ（シード）が検知されませんでした。")
                 return False
@@ -104,10 +109,15 @@ if __name__ == "__main__":
             self.channeled_data = entropy.channeled_data
             print("  - ⚙️ [Processor] 整流済みデータを受け取りました。StrataCrystallization/ への結晶化定着を開始します。")
             
+            processed_files = []
             for path, info in self.channeled_data.items():
                 base_name = os.path.basename(path)
                 scroll_name = f"scroll_{base_name}"
                 self.crystallize_scroll(scroll_name, info["payload"])
+                processed_files.append(path)
+
+            # 🌟 代謝の完成：結晶化を終えた元シードを Chaos 聖域から昇華・消去する
+            self.reset_chaos_sanctuary(processed_files)
 
             return True
 
@@ -122,9 +132,16 @@ if __name__ == "__main__":
             print(f"    🏛️ [Strata Crystallization] 結晶化定着完了 -> [{scroll_path}]")
             return scroll_path
 
-    # 本番オーケストレーションの駆動
-    master = ProductionStrataProcessor("StrataCrystallization")
+        def reset_chaos_sanctuary(self, processed_paths: list) -> None:
+            print("  - 🌪️ [Chaos Self-Cleaning] 代謝フェーズ：消費された原初シードを浄化します。")
+            for path in processed_paths:
+                if os.path.exists(path) and not path.endswith(".gitkeep"):
+                    os.remove(path)
+                    print(f"    ✨ 昇華完了（消去）: [{path}] -> Chaos の足元がゼロベースにリセットされました。")
+
+    # 完全自律代謝オーケストレーションの駆動
+    master = AutonomicStrataProcessor("StrataCrystallization")
     if master.orchestrate_cycle():
-        print("✨ [Processor 零点] 本番稼働：三位一体の循環および結晶化地層への定着が完遂しました。")
+        print("✨ [Processor 零点] 完全代謝：三位一体の循環、結晶化定着、および足元の零点リセットが完遂しました。")
     else:
         print("🍃 循環すべきシードが不在のため、聖域は静寂を保っています。")
