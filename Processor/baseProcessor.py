@@ -55,6 +55,11 @@ if __name__ == "__main__":
         def absorb_entropy_seed(self) -> Dict[str, str]:
             seeds = {}
             for path in self.source_paths:
+                # 🛑 ガードをコメントアウトし、何でもかんでも通してみる
+                # if path.lower().endswith(('.jpg', '.jpeg', '.png', '.gif', '.bin', '.exe')):
+                #     print(f"    🛡️ [Chaos Guard] 非テキストのバイナリを検知しました。シード化をスキップします: [{os.path.basename(path)}]")
+                #     continue
+                
                 if os.path.exists(path):
                     with open(path, "r", encoding="utf-8") as f:
                         seeds[path] = f.read()
