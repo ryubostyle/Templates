@@ -2,19 +2,21 @@
 import os
 import shutil
 from abc import ABC, abstractmethod
-from . import ENTROPY_ROOT, REPOSITORY_ROOT, NEXT_ROOT
 
 
 class BaseProcessor(ABC):
     """
-    Processor 基底クラス (完全無滞留・物理 sweep-to 準拠):
-    代謝・変換された実体を一切滞留させず、有無を言わさず
-    NEXT_ROOT（StrataCrystallization 聖域）へダイレクトに物理 sweep-to する感覚器。
+    Processor 基底クラス (os.path 安全自立版):
+    自身のファイル位置を起点に聖域座標と次なる代謝先を完全自給し、
+    滞留なく NEXT_ROOT へ物理 sweep-to する感覚器。
     """
     def __init__(self):
-        self.target_dir = ENTROPY_ROOT
-        self.repository_root = REPOSITORY_ROOT
-        self.next_root = NEXT_ROOT
+        # スクリプト自身の位置を起点に絶対座標を安全に算出
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        self.repository_root = os.path.dirname(current_dir)
+        
+        self.target_dir = current_dir
+        self.next_root = os.path.join(self.repository_root, "StrataCrystallization")
 
     @abstractmethod
     def sense_fluctuation(self) -> bool:
