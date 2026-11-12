@@ -1,64 +1,43 @@
 # Entropy/baseEntropy.py
 import os
+import shutil
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List
+from . import ENTROPY_ROOT, REPOSITORY_ROOT, NEXT_ROOT
+
 
 class BaseEntropy(ABC):
     """
-    Entropy基底クラス:
-    Chaosから送られてきた原初データ（seeds）を受け取り、
-    安全な配管（セーフティネット）を通じて次のProcessorへと移送・整流する責任を担います。
+    Entropy 基底クラス (完全無滞留・物理 sweep-to 準拠):
+    零点に流れ込んだ揺らぎを一切滞留させず、有無を言わさず
+    NEXT_ROOT（Processor 聖域）へダイレクトに物理 sweep-to する感覚器。
     """
-    def __init__(self, raw_seeds: Dict[str, str]):
-        self.raw_seeds = raw_seeds
-        self.channeled_data: Dict[str, Any] = {}
-        self.trapped_errors: List[str] = []
+    def __init__(self):
+        self.target_dir = ENTROPY_ROOT
+        self.repository_root = REPOSITORY_ROOT
+        self.next_root = NEXT_ROOT
 
     @abstractmethod
-    def channel_flow(self) -> bool:
-        """データを安全に下流へ流すための配管（移送・検証）を行う抽象メソッド"""
+    def sense_fluctuation(self) -> bool:
+        """エントロピー聖域内の揺らぎを感知する"""
         pass
 
-    @abstractmethod
-    def trap_errors(self, target_path: str, error_msg: str) -> None:
-        """移送中に発生した詰まりや破損を捕捉するセーフティネット"""
-        pass
-
-
-if __name__ == "__main__":
-    print("🌊 [Entropy 零点] 不可逆的移送・安全配管の単体テストを開始します...")
-
-    class SafePipeEntropy(BaseEntropy):
-        def channel_flow(self) -> bool:
-            print("  - 🌀 [配管] データの検針と整流を開始します。")
-            if not self.raw_seeds:
-                return False
-
-            for path, content in self.raw_seeds.items():
-                try:
-                    if not isinstance(content, str):
-                        raise TypeError(f"非互換のデータ型: {type(content)}")
-                    
-                    cleaned_content = content.strip()
-                    self.channeled_data[path] = {
-                        "status": "success",
-                        "payload": cleaned_content,
-                        "length": len(cleaned_content)
-                    }
-                    print(f"    ✓ 移送成功: [{path}] -> 下流へ安全にルーティングしました。")
-                except Exception as e:
-                    self.trap_errors(path, str(e))
-
-            return len(self.channeled_data) > 0
-
-        def trap_errors(self, target_path: str = "", error_msg: str = "") -> None:
-            if target_path and error_msg:
-                err_log = f"Path: {target_path} | Cause: {error_msg}"
-                self.trapped_errors.append(err_log)
-                print(f"    🛡️ [ErrorTrapper] 隔離しました: {err_log}")
-
-    mock_seeds = {".\\baseChaos.py": "import os\n# Mock Chaos"}
-    entropy_pipe = SafePipeEntropy(mock_seeds)
-    
-    if entropy_pipe.channel_flow():
-        print("✨ [Entropy 零点] 配管テスト：安全な移送とセーフティネットの稼働を確認しました。")
+    def sweep_to_next(self, file_path: str) -> None:
+        """
+        零点にあるファイルを滞留なしで NEXT_ROOT へ物理 sweep-to する
+        """
+        if not os.path.exists(self.next_root):
+            os.makedirs(self.next_root)
+            
+        base_name = os.path.basename(file_path)
+        if base_name == ".gitkeep":
+            return
+            
+        dest_path = os.path.join(self.next_root, base_name)
+        try:
+            if os.path.exists(file_path):
+                if os.path.exists(dest_path):
+                    os.remove(dest_path)
+                shutil.move(file_path, dest_path)
+                print(f"    ⚡ [Entropy Physical Sweep] 零点から NEXT_ROOT へ直行: [{base_name}] -> {self.next_root}")
+        except Exception as e:
+            print(f"    ⚠️ [Entropy Sweep Error] [{base_name}]: {e}")
