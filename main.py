@@ -83,14 +83,13 @@ class CirculationPipeline:
                 except Exception as e:
                     print(f"    (Binary or unreadable asset: {e})")
 
-                # 2. 循環の輪を閉じる（Chaos への物理還流）
-                dest_path = os.path.join(self.chaos_dir, base_name)
-                if os.path.exists(dest_path):
-                    os.remove(dest_path)
-                
-                shutil.move(file_path, dest_path)
-                print(f"    🔄 [Eternal Circulation] 輪が閉じられました: [{base_name}] -> 循環の起点 (Chaos)")
-
+                # 🔄 【変更】循環の輪（Chaosへの物理還流）をここで停止し、聖域に定着させる
+                # dest_path = os.path.join(self.chaos_dir, base_name)
+                # if os.path.exists(dest_path):
+                #     os.remove(dest_path)
+                # 
+                # shutil.move(file_path, dest_path)
+                # print(f"    🔄 [Eternal Circulation] 輪が閉じられました: [{base_name}] -> 循環の起点 (Chaos)")
 
 if __name__ == "__main__":
     pipeline = CirculationPipeline()
