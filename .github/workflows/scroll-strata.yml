@@ -26,15 +26,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install pyyaml
 
-      - name: Step 1: Materialize Sanctuaries
-        run: |
-          python build_sanctuaries.py
+      - name: Materialize Sanctuaries
+        run: python build_sanctuaries.py
 
-      - name: Step 2: Execute Metabolism
-        run: |
-          python main.py
+      - name: Execute Metabolism
+        run: python main.py
 
-      - name: Step 3: Git Auto-Commit and Push
+      - name: Git Auto-Commit and Push
         uses: endbug/git-auto-commit@v5
         with:
           message: "🔥 [Cloud Metabolism] Autonomous sweep & circulation executed."
