@@ -1,0 +1,26 @@
+# ==========================================
+# Oriented-Philosophia Architecture Definition
+# ==========================================
+system: "Autonomous Circulation Pipeline"
+version: "2.0.0"
+
+sanctuaries:
+  - name: "Chaos"
+    level: 0
+    role: "感覚器・揺らぎの原初インプット"
+    next: "Entropy"
+
+  - name: "Entropy"
+    level: 1
+    role: "神経・血流・安全配管と整流"
+    next: "Processor"
+
+  - name: "Processor"
+    level: 2
+    role: "心臓・意志・実務執行オーケストレーター"
+    next: "StrataCrystallization"
+
+  - name: "StrataCrystallization"
+    level: 3
+    role: "地層・永遠の結晶化アーカイブ（終端）"
+    next: null
