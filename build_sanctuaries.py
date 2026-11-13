@@ -27,7 +27,7 @@ def materialize_architecture():
         gitkeep_path = os.path.join(name, ".gitkeep")
         if not os.path.exists(gitkeep_path):
             with open(gitkeep_path, 'w', encoding='utf-8') as gk:
-                gk.pass # 空のファイル
+                pass # 空ファイルとして生成
 
         # 各 __init__.py の自動動的記述
         init_path = os.path.join(name, "__init__.py")
