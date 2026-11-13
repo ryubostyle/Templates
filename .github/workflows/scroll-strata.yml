@@ -1,10 +1,7 @@
 name: Cloud Metabolism & Architecture Orchestration
 
 on:
-  # 1. 手動でのワークフロー起動を許可
   workflow_dispatch:
-  
-  # 2. 毎日深夜0時（UTC / 日本時間午前9時など）に定期実行する場合
   schedule:
     - cron: '0 0 * * *'
 
@@ -13,31 +10,31 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write  # リポジトリへの自動コミット・プッシュ権限
+      contents: write
 
     steps:
-      - name: 📥 Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🐍 Set up Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: 📦 Install dependencies (PyYAML etc.)
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install pyyaml
 
-      - name: 🏛️ Step 1: Materialize Sanctuaries (Architecture Builder)
+      - name: Step 1: Materialize Sanctuaries
         run: |
           python build_sanctuaries.py
 
-      - name: 🔥 Step 2: Execute Metabolism & Circulation
+      - name: Step 2: Execute Metabolism
         run: |
           python main.py
 
-      - name: 🚀 Step 3: Git Auto-Commit & Push Strata Crystallization
+      - name: Step 3: Git Auto-Commit and Push
         uses: endbug/git-auto-commit@v5
         with:
           message: "🔥 [Cloud Metabolism] Autonomous sweep & circulation executed."
