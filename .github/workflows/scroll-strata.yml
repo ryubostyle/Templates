@@ -1,0 +1,5 @@
+- name: 🏛️ Build Sanctuaries dynamically
+        run: python build_sanctuaries.py
+
+      - name: 🔥 Execute Metabolism / Circulation
+        run: python main.py
