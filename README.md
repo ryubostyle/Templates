@@ -1617,4 +1617,296 @@ jobs:
 このマニュアルにより、いつでもゼロベースから高潔な量子カスケード・パイプラインを再構築し、自律的な地層結晶化の営みを再現することが可能です！
 
 ---
+---
+---
+
+すでに聖域が物理的に存在している状態（あるいは再実行時）においても、各スクリプトが持つ「べき等性（安全ガード）」により、重複生成やエラーが一切起きずにトポロジが安全に保護・同期されるという「安全な再実行・べき等性の保証」に関する知見ですね。
+
+この重要な運用上の実務知見を完全に統合し、さらに洗練させた『自律循環システム構築・運用マニュアル（完全版）』をここに編纂します。
+
+---
+
+# 📜 自律循環システム構築・運用マニュアル（完全統合版）
+
+**（Oriented-Philosophia & Cloud Metabolism Architecture）**
+
+## 1. 🏛️ システム概要と基本思想
+
+本システムは、物理・情報理論の根本原則（量子カスケードの考え方）に基づき、リポジトリ自体を一つの「自律生命体」としてクラウド上で稼働させるためのアーキテクチャです。散らばる未整流なデータの感知から、安全な配管、実務の執行、そして永遠の結晶化地層への定着までを完全にカプセル化しています。
+
+```text
+┌──────────────┐
+│    Chaos     │ 🌪️ (上流・原初：未整流な揺らぎのインプット)
+└──────┬───────┘
+       │ 🚀 (量子ジャンプ / Sweep-to)
+       ▼
+┌──────────────┐
+│   Entropy    │ 🌊 (中流・神経血流：安全配管と整流)
+└──────┬───────┘
+       │ ⚡ (量子ジャンプ / Sweep-to)
+       ▼
+┌──────────────┐
+│  Processor   │ 🔥 (下流・心臓部：タクトを振る実務執行)
+└──────┬───────┘
+       │ ⚙️ (量子ジャンプ / Sweep-to)
+       ▼
+┌────────────────────────┐
+│ StrataCrystallization  │ 🏛️ (終端・地層結晶化アーカイブ)
+└────────────────────────┘
+
+```
+
+---
+
+## 2. 🧩 宣言的トポロジの定義：`architecture.yml`
+
+ハードコーディングを一切排除し、システム全体の位相構造を外側から律する唯一の真実（Single Source of Truth）としてリポジトリのルートに配置します。
+
+```yaml
+# architecture.yml
+system: "Autonomous Circulation Pipeline"
+version: "2.0.0"
+
+sanctuaries:
+  - name: "Chaos"
+    level: 0
+    role: "感覚器・揺らぎの原初インプット"
+    next: "Entropy"
+
+  - name: "Entropy"
+    level: 1
+    role: "神経・血流・安全配管と整流"
+    next: "Processor"
+
+  - name: "Processor"
+    level: 2
+    role: "心臓・意志・実務執行オーケストレーター"
+    next: "StrataCrystallization"
+
+  - name: "StrataCrystallization"
+    level: 3
+    role: "地層・永遠の結晶化アーカイブ（終端）"
+    next: null
+
+```
+
+---
+
+## 3. 🛠️ 聖域の自動構築ジェネレータ：`build_sanctuaries.py`
+
+設計図（ `architecture.yml` ）を読み込み、必要なディレクトリ構造と動的 `__init__.py`（`NEXT_ROOT` の自動解決ロジック内包）を自動マテリアライズ（物質化）します。
+
+> **💡 べき等性の保証（安全ガード）**:
+> 既に聖域（ディレクトリ）が物理的に存在している状態で本スクリプトを再実行した場合でも、`if not os.path.exists(name):` などの安全ガードにより既存のフォルダやデータが損なわれることはありません。安全にトポロジの同期と保守が行われます。
+
+```python
+# build_sanctuaries.py
+import os
+import yaml
+
+def materialize_architecture():
+    yml_path = "architecture.yml"
+    if not os.path.exists(yml_path):
+        print("⚠️ architecture.yml が見つかりません。")
+        return
+
+    with open(yml_path, 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+
+    print("🏛️ [Auto-Builder] 宣言的アーキテクチャに基づく聖域の自動構築を開始します...")
+
+    for sanctuary in config.get("sanctuaries", []):
+        name = sanctuary["name"]
+        role = sanctuary["role"]
+        
+        # べき等性の担保：既に存在する場合は重複生成しない
+        if not os.path.exists(name):
+            os.makedirs(name)
+            print(f"  + 📁 聖域フォルダ生成: {name}/")
+
+        gitkeep_path = os.path.join(name, ".gitkeep")
+        if not os.path.exists(gitkeep_path):
+            with open(gitkeep_path, 'w', encoding='utf-8') as gk:
+                pass
+
+        init_path = os.path.join(name, "__init__.py")
+        init_content = f'''import os
+import yaml
+
+CURRENT_ROOT = os.path.dirname(os.path.abspath(__file__))
+REPOSITORY_ROOT = os.path.dirname(CURRENT_ROOT)
+SANCTUARY_NAME = os.path.basename(CURRENT_ROOT)
+
+def resolve_next_root():
+    yml_path = os.path.join(REPOSITORY_ROOT, "architecture.yml")
+    if os.path.exists(yml_path):
+        try:
+            with open(yml_path, 'r', encoding='utf-8') as f:
+                config = yaml.safe_load(f)
+            for s in config.get("sanctuaries", []):
+                if s["name"] == SANCTUARY_NAME:
+                    next_name = s.get("next")
+                    if next_name:
+                        return os.path.join(REPOSITORY_ROOT, next_name)
+        except Exception as e:
+            print(f"⚠️ 読み込みエラー: {{e}}")
+    return CURRENT_ROOT
+
+SANCTUARY_ROOT = CURRENT_ROOT
+NEXT_ROOT = resolve_next_root()
+'''
+
+        with open(init_path, 'w', encoding='utf-8') as init_file:
+            init_file.write(init_content)
+        print(f"  + 📜 聖域の初期化定着: {name}/__init__.py")
+
+    print("✨ [Auto-Builder] すべての聖域と動的トポロジの構築が完遂しました。")
+
+if __name__ == "__main__":
+    materialize_architecture()
+
+```
+
+---
+
+## 4. 🔥 主制御代謝パイプライン：`main.py`
+
+構築された聖域の器を使い、量子カスケード（段階的なスイープと精製）を駆動し、最終的に最下流の `StrataCrystallization/` へ成果物を永遠に定着させます。
+
+```python
+# main.py
+import os
+import glob
+import shutil
+try:
+    import yaml
+except ImportError:
+    yaml = None
+
+class CirculationPipeline:
+    def __init__(self):
+        self.root_dir = os.path.dirname(os.path.abspath(__file__))
+        self.chaos_dir = os.path.join(self.root_dir, "Chaos")
+        self.entropy_dir = os.path.join(self.root_dir, "Entropy")
+        self.processor_dir = os.path.join(self.root_dir, "Processor")
+        self.crystallization_dir = os.path.join(self.root_dir, "StrataCrystallization")
+
+    def run_metabolism(self):
+        print("🔥 [Cloud Metabolism] 宣言的アーキテクチャに基づく雲上の代謝サイクルを開始します...")
+        self._sweep_sanctuary(self.chaos_dir, self.entropy_dir, "🚀 [Chaos -> Entropy]")
+        self._sweep_sanctuary(self.entropy_dir, self.processor_dir, "⚡ [Entropy -> Processor]")
+        self._sweep_sanctuary(self.processor_dir, self.crystallization_dir, "⚙️ [Processor -> Crystallization]")
+        self._crystallize_and_store()
+        print("✨ [Cloud Metabolism] 飛び飛びの量子準位を巡る一連の代謝サイクルが正常に完了しました。")
+
+    def _sweep_sanctuary(self, src_dir: str, dest_dir: str, label: str):
+        if not os.path.exists(src_dir):
+            return
+        if not os.path.exists(dest_dir):
+            os.makedirs(dest_dir)
+
+        files = glob.glob(os.path.join(src_dir, "*"))
+        for file_path in files:
+            if os.path.isfile(file_path):
+                base_name = os.path.basename(file_path)
+                if base_name == ".gitkeep":
+                    continue
+                
+                dest_path = os.path.join(dest_dir, base_name)
+                if os.path.exists(dest_path):
+                    os.remove(dest_path)
+                
+                shutil.move(file_path, dest_path)
+                print(f"    {label} 移送: [{base_name}] -> {os.path.basename(dest_dir)}")
+
+    def _crystallize_and_store(self):
+        if not os.path.exists(self.crystallization_dir):
+            return
+
+        files = glob.glob(os.path.join(self.crystallization_dir, "*"))
+        for file_path in files:
+            if os.path.isfile(file_path):
+                base_name = os.path.basename(file_path)
+                if base_name == ".gitkeep":
+                    continue
+
+                print(f"\n    💎✨ [Crystallization Screen Output] 表出完了 ──────────────────")
+                print(f"    📜 結晶体ファイル: [{base_name}]")
+                try:
+                    with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                        content = f.read()
+                        print(f"    --------------------------------------------------")
+                        print(content[:500] + ("..." if len(content) > 500 else ""))
+                        print(f"    --------------------------------------------------\n")
+                except Exception as e:
+                    print(f"    (Binary or unreadable asset: {e})")
+
+                print(f"    🏛️ [Strata Stored] 循環の輪は閉じられず、結晶体が永遠の地層に定着しました: [{base_name}]")
+
+if __name__ == "__main__":
+    pipeline = CirculationPipeline()
+    pipeline.run_metabolism()
+
+```
+
+---
+
+## 5. ⚙️ クラウド自動代謝（GitHub Actions）
+
+[.github/workflows/scroll-strata.yml](https://github.com/ryubostyle/Templates/blob/main/README.md#-%E8%87%AA%E5%BE%8B%E5%AE%9A%E7%9D%80%E3%83%AF%E3%83%BC%E3%82%AF%E3%83%95%E3%83%AD%E3%83%BC%E8%A8%AD%E8%A8%88githubworkflowsscroll-stratayml) に配置することで、手動（ `workflow_dispatch` ）および定期実行（ `schedule` ）により、クラウドランナー上で自動的にビルドから代謝、コミット・プッシュまでが完結します。
+
+```yaml
+# .github/workflows/scroll-strata.yml
+name: Cloud Metabolism & Architecture Orchestration
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  metabolism:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Materialize Sanctuaries
+        run: python build_sanctuaries.py
+
+      - name: Execute Metabolism
+        run: python main.py
+
+      - name: Commit and Push Strata Crystallization
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add Chaos/ Entropy/ Processor/ StrataCrystallization/ architecture.yml
+          git diff --quiet && git diff --staged --quiet || git commit -m "🔥 [Cloud Metabolism] Autonomous sweep & circulation executed."
+          git push
+
+```
+
+---
+
+この完全統合版マニュアルにより、すでに聖域が存在する環境であっても安全に再実行・運用を行いながら、いつでも高潔な量子カスケード・パイプラインの営みを再現・継続することが可能です！
+
+---
+
+
+---
 
